@@ -287,7 +287,7 @@ export class DockTabs extends React.PureComponent<Props, any> {
     }
     return (
       <DockTabBar onDragStart={onPanelDragStart} onDragMove={onPanelDragMove} onDragEnd={onPanelDragEnd}
-                  TabNavList={TabNavList} isMaximized={panelData.parent.mode === 'maximize'} {...props}
+                  TabNavList={TabNavList} isMaximized={panelData.parent.mode === 'maximize'} className={((panelData.tabs.length === 1 && panelData.parent.mode !== 'float')?"dock-bar-autohide":"")} {...props}
                   extra={panelExtraContent}/>
     );
   };

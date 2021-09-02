@@ -34,6 +34,7 @@ function checkLocalTabMove(key: string, tabbar: HTMLDivElement): boolean {
 
 interface DockTabBarProps extends TabNavListProps {
   isMaximized: boolean;
+  className: string;
   onDragStart?: DragManager.DragHandler;
   onDragMove?: DragManager.DragHandler;
   onDragEnd?: DragManager.DragHandler;
@@ -42,7 +43,7 @@ interface DockTabBarProps extends TabNavListProps {
 
 export function DockTabBar(props: DockTabBarProps) {
   const {
-    onDragStart, onDragMove, onDragEnd, TabNavList, isMaximized,
+    onDragStart, onDragMove, onDragEnd, TabNavList, isMaximized, className,
     ...restProps
   } = props;
 
@@ -69,7 +70,7 @@ export function DockTabBar(props: DockTabBarProps) {
                  onDragMoveT={onDragMove}
                  onDragEndT={onDragEnd}
                  role="tablist"
-                 className="dock-bar"
+                 className={"dock-bar"+(className?(" "+className): "")}
                  onKeyDown={onKeyDown}
                  getRef={getRef}
                  tabIndex={-1}
