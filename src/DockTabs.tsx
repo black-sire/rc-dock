@@ -285,9 +285,10 @@ export class DockTabs extends React.PureComponent<Props, any> {
         panelExtraContent = this.addNewWindowMenu(panelExtraContent, !maximizable);
       }
     }
+    let noHide = panelData.tabs.some((tab:any) => tab.noAutoHide);
     return (
       <DockTabBar onDragStart={onPanelDragStart} onDragMove={onPanelDragMove} onDragEnd={onPanelDragEnd}
-                  TabNavList={TabNavList} isMaximized={panelData.parent.mode === 'maximize'} className={((panelData.tabs.length === 1 && panelData.parent.mode !== 'float')?"dock-bar-autohide":"")} {...props}
+                  TabNavList={TabNavList} isMaximized={panelData.parent.mode === 'maximize'} className={((panelData.tabs.length === 1 && panelData.parent.mode !== 'float' && !noHide)?"dock-bar-autohide":"")} {...props}
                   extra={panelExtraContent}/>
     );
   };
