@@ -233,8 +233,6 @@ LazyPromise.prototype.catch = function (onError) {
   return this.promise.catch(onError);
 };
 },{"./bundle-url":"CSru"}],"deHo":[function(require,module,exports) {
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 require("_bundle_loader")(require.resolve('./shared-import')).then(({
   React,
   ReactDOM,
@@ -243,7 +241,7 @@ require("_bundle_loader")(require.resolve('./shared-import')).then(({
   Divider
 }) => {
   // keep the above unused import so tools script can understand this jsx
-  let demos = ['basic', 'panel-style', 'drop-mode', 'tab-update', 'save-layout', 'panel-extra'];
+  let demos = ['basic', 'dark-theme', 'panel-style', 'drop-mode', 'tab-update', 'save-layout', 'panel-extra'];
   let advance = ['new-window', 'adv-tab-update', 'adv-save-layout', 'controlled-layout', 'tab-cache', 'divider-box', 'drag-new-tab'];
   let defaultPage = window.location.hash.substr(1);
 
@@ -252,13 +250,9 @@ require("_bundle_loader")(require.resolve('./shared-import')).then(({
   }
 
   class App extends React.Component {
-    constructor(...args) {
-      super(...args);
-
-      _defineProperty(this, "state", {
-        current: defaultPage
-      });
-    }
+    state = {
+      current: defaultPage
+    };
 
     render() {
       let {

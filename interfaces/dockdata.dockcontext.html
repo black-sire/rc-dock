@@ -103,18 +103,18 @@
 					<a name="dockmove" class="tsd-anchor"></a>
 					<h3>dock<wbr>Move</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">dock<wbr>Move<span class="tsd-signature-symbol">(</span>source<span class="tsd-signature-symbol">: </span><a href="dockdata.tabdata.html" class="tsd-signature-type" data-tsd-kind="Interface">TabData</a><span class="tsd-signature-symbol"> | </span><a href="dockdata.paneldata.html" class="tsd-signature-type" data-tsd-kind="Interface">PanelData</a>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="dockdata.tabdata.html" class="tsd-signature-type" data-tsd-kind="Interface">TabData</a><span class="tsd-signature-symbol"> | </span><a href="dockdata.paneldata.html" class="tsd-signature-type" data-tsd-kind="Interface">PanelData</a><span class="tsd-signature-symbol"> | </span><a href="dockdata.boxdata.html" class="tsd-signature-type" data-tsd-kind="Interface">BoxData</a>, direction<span class="tsd-signature-symbol">: </span><a href="../modules/dockdata.html#dropdirection" class="tsd-signature-type" data-tsd-kind="Type alias">DropDirection</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">dock<wbr>Move<span class="tsd-signature-symbol">(</span>source<span class="tsd-signature-symbol">: </span><a href="dockdata.tabdata.html" class="tsd-signature-type" data-tsd-kind="Interface">TabData</a><span class="tsd-signature-symbol"> | </span><a href="dockdata.paneldata.html" class="tsd-signature-type" data-tsd-kind="Interface">PanelData</a>, target<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="dockdata.tabdata.html" class="tsd-signature-type" data-tsd-kind="Interface">TabData</a><span class="tsd-signature-symbol"> | </span><a href="dockdata.paneldata.html" class="tsd-signature-type" data-tsd-kind="Interface">PanelData</a><span class="tsd-signature-symbol"> | </span><a href="dockdata.boxdata.html" class="tsd-signature-type" data-tsd-kind="Interface">BoxData</a>, direction<span class="tsd-signature-symbol">: </span><a href="../modules/dockdata.html#dropdirection" class="tsd-signature-type" data-tsd-kind="Type alias">DropDirection</a>, floatPosition<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>height<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>left<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>top<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>width<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ticlo/rc-dock/blob/daac61c/src/DockData.ts#L318">src/DockData.ts:318</a></li>
+									<li>Defined in <a href="https://github.com/black-sire/rc-dock/blob/d181e93/src/DockData.ts#L345">DockData.ts:345</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>move a tab or a panel, if source or target is already in the layout, you can use the find method to get it with id first</p>
+									<p>Move a tab or a panel, if source or target is already in the layout, you can use the find method to get it with id first</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -142,9 +142,29 @@
 										<ul>
 											<li>when direction is &#39;after-tab&#39; or &#39;before-tab&#39;, target must be TabData</li>
 											<li>when direction is &#39;remove&#39; or &#39;front&#39;, target must be null</li>
-											<li>when direction is &#39;float&#39;, target doesnt matter. If this is called directly from code without any user interaction, source must be PanelData with x,y,w,h properties</li>
+											<li>when direction is &#39;float&#39;, target doesn&#39;t matter. If this is called directly from code without any user interaction, source must be PanelData with x,y,w,h properties</li>
 										</ul>
 									</div>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> floatPosition: <span class="tsd-signature-symbol">{ </span>height<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>left<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>top<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>width<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>position of float panel, used only when direction=&quot;float&quot;</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>height<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>left<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>top<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>width<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -161,12 +181,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ticlo/rc-dock/blob/daac61c/src/DockData.ts#L328">src/DockData.ts:328</a></li>
+									<li>Defined in <a href="https://github.com/black-sire/rc-dock/blob/d181e93/src/DockData.ts#L360">DockData.ts:360</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>find PanelData or TabData by id</p>
+									<p>Find PanelData or TabData by id</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -192,12 +212,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ticlo/rc-dock/blob/daac61c/src/DockData.ts#L323">src/DockData.ts:323</a></li>
+									<li>Defined in <a href="https://github.com/black-sire/rc-dock/blob/d181e93/src/DockData.ts#L355">DockData.ts:355</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>get the TabGroup defined in defaultLayout</p>
+									<p>Get the TabGroup defined in defaultLayout</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -220,12 +240,12 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ticlo/rc-dock/blob/daac61c/src/DockData.ts#L344">src/DockData.ts:344</a></li>
+									<li>Defined in <a href="https://github.com/black-sire/rc-dock/blob/d181e93/src/DockData.ts#L376">DockData.ts:376</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>move focus to a dockpanel near by</p>
+									<p>Move focus to a dockpanel nearby</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -247,18 +267,18 @@
 					<a name="updatetab" class="tsd-anchor"></a>
 					<h3>update<wbr>Tab</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">update<wbr>Tab<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, newTab<span class="tsd-signature-symbol">: </span><a href="dockdata.tabdata.html" class="tsd-signature-type" data-tsd-kind="Interface">TabData</a>, makeActive<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Tab<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, newTab<span class="tsd-signature-symbol">: </span><a href="dockdata.tabdata.html" class="tsd-signature-type" data-tsd-kind="Interface">TabData</a>, makeActive<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ticlo/rc-dock/blob/daac61c/src/DockData.ts#L337">src/DockData.ts:337</a></li>
+									<li>Defined in <a href="https://github.com/black-sire/rc-dock/blob/d181e93/src/DockData.ts#L369">DockData.ts:369</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>update a tab with new TabData</p>
+									<p>Update a tab with new TabData</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -276,7 +296,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>makeActive: <span class="tsd-signature-type">boolean</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> makeActive: <span class="tsd-signature-type">boolean</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>whether to make the tab the active child of parent panel</p>
 									</div>
