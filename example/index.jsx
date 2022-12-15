@@ -1,9 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import {Divider} from '../lib';
 // keep the above unused import so tools script can understand this jsx
 
-let demos = ['basic', 'panel-style', 'drop-mode', 'tab-update', 'save-layout', 'panel-extra'];
+let demos = ['basic', 'dark-theme', 'panel-style', 'drop-mode', 'tab-update', 'save-layout', 'panel-extra'];
 let advance = ['new-window', 'adv-tab-update', 'adv-save-layout', 'controlled-layout', 'tab-cache', 'divider-box', 'drag-new-tab'];
 
 let defaultPage = window.location.hash.substr(1);

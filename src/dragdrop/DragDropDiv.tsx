@@ -1,4 +1,4 @@
-import React, {CSSProperties} from "react";
+import * as React from "react";
 import * as DragManager from "./DragManager";
 import {GestureState} from "./GestureManager";
 
@@ -11,7 +11,11 @@ interface DragDropDivProps extends React.HTMLAttributes<HTMLDivElement> {
   onDragEndT?: DragManager.DragHandler;
   onDragOverT?: DragManager.DragHandler;
   onDragLeaveT?: DragManager.DragHandler;
-  onDropT?: DragManager.DragHandler;
+  /**
+   * Anything returned by onDropT will be stored in DragState.dropped
+   * return false to indicate the drop is canceled
+   */
+  onDropT?: DragManager.DropHandler;
   /**
    * by default onDragStartT will be called on first drag move
    * but if directDragT is true, onDragStartT will be called as soon as mouse is down
@@ -94,7 +98,7 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
   };
 
   onDragStart(event: MouseEvent | TouchEvent) {
-    if (!DragManager.checkPointerDownEvent(event)) {
+    if (DragManager.isDragging()) {
       // same pointer event shouldn't trigger 2 drag start
       return;
     }
@@ -151,7 +155,6 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
       this.onDragEnd();
       return false;
     }
-    this.ownerDocument.body.classList.add('dock-dragging');
     state._onMove();
     this.ownerDocument.addEventListener('keydown', this.onKeyDown);
     return true;
@@ -161,6 +164,10 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
   onMouseMove = (e: MouseEvent) => {
     let {onDragMoveT} = this.props;
     if (this.waitingMove) {
+      if (DragManager.isDragging()) {
+        this.onDragEnd();
+        return;
+      }
       if (!this.checkFirstMove(e)) {
         return;
       }
@@ -177,6 +184,10 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
   onTouchMove = (e: TouchEvent) => {
     let {onDragMoveT} = this.props;
     if (this.waitingMove) {
+      if (DragManager.isDragging()) {
+        this.onDragEnd();
+        return;
+      }
       if (!this.checkFirstMove(e)) {
         return;
       }
@@ -199,10 +210,8 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
     this.removeListeners();
 
     if (!this.waitingMove) {
-      if (e) {
-        // e=null means drag is canceled
-        state._onDragEnd();
-      }
+      // e=null means drag is canceled
+      state._onDragEnd(e == null);
       if (onDragEndT) {
         onDragEndT(state);
       }
@@ -215,13 +224,12 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
     this.ownerDocument.addEventListener('touchmove', this.onGestureMove);
     this.ownerDocument.addEventListener('touchend', this.onGestureEnd);
     this.ownerDocument.addEventListener('keydown', this.onKeyDown);
-    this.ownerDocument.body.classList.add('dock-dragging');
     this.gesturing = true;
     this.waitingMove = true;
   }
 
   onGestureStart(event: TouchEvent) {
-    if (!DragManager.checkPointerDownEvent(event)) {
+    if (!DragManager.isDragging()) {
       // same pointer event shouldn't trigger 2 drag start
       return;
     }
@@ -272,7 +280,7 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
       onGestureEndT();
     }
   };
-  onKeyDown = (e?: KeyboardEvent) => {
+  onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Escape') {
       this.cancel();
     }
@@ -300,7 +308,7 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
         this.ownerDocument.removeEventListener('mouseup', this.onDragEnd);
       }
     }
-    this.ownerDocument.body.classList.remove('dock-dragging');
+
     this.ownerDocument.removeEventListener('keydown', this.onKeyDown);
     this.listening = false;
     this.gesturing = false;
@@ -309,7 +317,6 @@ export class DragDropDiv extends React.PureComponent<DragDropDivProps, any> {
   cleanupDrag(state: DragManager.DragState) {
     this.dragType = null;
     this.waitingMove = false;
-    DragManager.destroyDraggingElement(state);
   }
 
   render(): React.ReactNode {

@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
 import classNames from 'classnames';
 import {DockContext, DockContextType, TabPaneCache} from "./DockData";
 import {TabPaneProps} from "rc-tabs";
@@ -31,7 +30,9 @@ export default class DockTabPane extends React.PureComponent<DockTabPaneProps, a
     }
     if (cached && this._ref) {
       this._cache = this.context.getTabCache(cacheId, this);
-      this._ref.appendChild(this._cache.div);
+      if (!this._ref.contains(this._cache.div)) {
+        this._ref.appendChild(this._cache.div);
+      }
       this.context.updateTabCache(this._cache.id, children);
     }
   }

@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import {jsxTab, htmlTab} from './prism-tabs';
 import {DockLayout} from '../lib';
 
@@ -30,7 +30,7 @@ let defaultTab = {
 let headlessTab = {
   title: 'headless',
   content: (
-    <div style={{background: '#f6f6f6', height: '100%', margin: 0, padding: 30}}>
+    <div style={{ height: '100%', margin: 0, padding: 30 }}>
       <p>Hide border and header.</p>
       Move mouse near top border to show header.
     </div>

@@ -20,6 +20,7 @@ export class DragState {
   clientY = 0;
   dx = 0;
   dy = 0;
+  dropped: any = false;
 
   constructor(event: MouseEvent | TouchEvent, component: DragDropComponent, init = false) {
     this.event = event;
@@ -66,6 +67,7 @@ export class DragState {
     }
 
     createDraggingElement(this, refElement, draggingHtml);
+    this.component.ownerDocument.body.classList.add('dock-dragging');
   }
 
   setData(data?: {[key: string]: any}, scope?: any) {
@@ -122,17 +124,21 @@ export class DragState {
     moveDraggingElement(this);
   }
 
-  _onDragEnd() {
-    if (_droppingHandlers && _droppingHandlers.onDropT) {
-      _droppingHandlers.onDropT(this);
+  _onDragEnd(canceled: boolean = false) {
+    if (_droppingHandlers && _droppingHandlers.onDropT && !canceled) {
+      this.dropped = _droppingHandlers.onDropT(this);
+
+      if (this.component.dragType === 'right') {
+        // prevent the next menu event if drop handler is called on right mouse button
+        this.component.ownerDocument.addEventListener('contextmenu', preventDefault, true);
+        setTimeout(() => {
+          this.component.ownerDocument.removeEventListener('contextmenu', preventDefault, true);
+        }, 0);
+      }
     }
-    if (this.component.dragType === 'right') {
-      // prevent the next menu event if drop handler is called on right mouse button
-      this.component.ownerDocument.addEventListener('contextmenu', preventDefault, true);
-      setTimeout(() => {
-        this.component.ownerDocument.removeEventListener('contextmenu', preventDefault, true);
-      }, 0);
-    }
+
+    destroyDraggingElement(this);
+    this.component.ownerDocument.body.classList.remove('dock-dragging');
   }
 }
 
@@ -143,6 +149,7 @@ function preventDefault(e: Event) {
 
 
 export type DragHandler = (state: DragState) => void;
+export type DropHandler = (state: DragState) => any;
 
 
 let _dataScope: any;
@@ -166,7 +173,7 @@ function setDroppingHandler(handlers: DragHandlers, state: DragState) {
 interface DragHandlers {
   onDragOverT?: DragHandler;
   onDragLeaveT?: DragHandler;
-  onDropT?: DragHandler;
+  onDropT?: DropHandler;
 }
 
 let _dragListeners: WeakMap<HTMLElement, DragHandlers> = new WeakMap<HTMLElement, DragHandlers>();
@@ -268,7 +275,6 @@ export function destroyDraggingElement(e: DragState) {
     _draggingDiv = null;
   }
 
-
   _draggingState = null;
   setDroppingHandler(null, e);
 
@@ -289,21 +295,6 @@ export function addDragStateListener(callback: (scope: any) => void) {
 
 export function removeDragStateListener(callback: (scope: any) => void) {
   _dragStateListener.delete(callback);
-}
-
-let _lastPointerDownEvent: any;
-
-export function checkPointerDownEvent(e: any) {
-  if (e instanceof MouseEvent && e.button !== 0 && e.button !== 2) {
-    // only allows left right button drag
-    return false;
-  }
-  if (e !== _lastPointerDownEvent) {
-    // same event can't trigger drag twice
-    _lastPointerDownEvent = e;
-    return true;
-  }
-  return false;
 }
 
 // work around for drag scroll issue on IOS

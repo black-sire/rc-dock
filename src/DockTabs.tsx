@@ -1,6 +1,5 @@
-import React from "react";
-import {DockContext, DockContextType, DropDirection, PanelData, TabData, TabGroup} from "./DockData";
-import {compareArray, compareKeys} from "./util/Compare";
+import * as React from "react";
+import {DockContext, DockContextType, DropDirection, PanelData, TabData} from "./DockData";
 import Tabs from 'rc-tabs';
 import Menu, {MenuItem} from 'rc-menu';
 import Dropdown from 'rc-dropdown';
@@ -25,7 +24,7 @@ function findParentPanel(element: HTMLElement) {
 }
 
 function isPopupDiv(r: HTMLDivElement): boolean {
-  return (r == null || r.parentElement?.tagName === 'LI' || r.parentElement?.parentElement.tagName === 'LI');
+  return (r == null || r.parentElement?.tagName === 'LI' || r.parentElement?.parentElement?.tagName === 'LI');
 }
 
 export class TabCache {
@@ -70,9 +69,14 @@ export class TabCache {
   };
 
   onDragStart = (e: DragManager.DragState) => {
-    let panel = findParentPanel(this._ref);
+    let panel = this.data.parent;
+    if (panel.parent.mode === 'float' && panel.tabs.length === 1) {
+      // when it's the only tab in a float panel, skip this drag, let parent tab bar handle it
+      return;
+    }
+    let panelElement = findParentPanel(this._ref);
     let tabGroup = this.context.getGroup(this.data.group);
-    let [panelWidth, panelHeight] = getFloatPanelSize(panel, tabGroup);
+    let [panelWidth, panelHeight] = getFloatPanelSize(panelElement, tabGroup);
 
     e.setData({tab: this.data, panelSize: [panelWidth, panelHeight]}, this.context.getDockId());
     e.startDrag(this._ref.parentElement, this._ref.parentElement);
@@ -96,7 +100,10 @@ export class TabCache {
       }
       group = panel.group;
     }
+    let tabGroup = this.context.getGroup(group);
     if (group !== this.data.group) {
+      e.reject();
+    } else if (tabGroup?.floatable === 'singleTab' && this.data.parent?.parent?.mode === 'float') {
       e.reject();
     } else if (tab && tab !== this.data) {
       let direction = this.getDropDirection(e);
@@ -149,7 +156,7 @@ export class TabCache {
       content = content(this.data);
     }
     let tab = (
-      <DragDropDiv getRef={this.getRef} onDragStartT={onDragStart}
+      <DragDropDiv getRef={this.getRef} onDragStartT={onDragStart} role="tab" aria-selected={parent.activeId === id}
                    onDragOverT={onDragOver} onDropT={onDrop} onDragLeaveT={onDragLeave}>
         {title}
         {closable ?
@@ -280,7 +287,10 @@ export class DockTabs extends React.PureComponent<Props, any> {
     if (panelExtra) {
       panelExtraContent = panelExtra(panelData, this.context);
     } else if (maximizable || showNewWindowButton) {
-      panelExtraContent = <div className="dock-panel-max-btn" onClick={maximizable ? this.onMaximizeClick : null}/>;
+      panelExtraContent = <div
+        className={panelData.parent.mode === 'maximize' ? "dock-panel-min-btn" : "dock-panel-max-btn" }
+        onClick={maximizable ? this.onMaximizeClick : null}
+      />;
       if (showNewWindowButton) {
         panelExtraContent = this.addNewWindowMenu(panelExtraContent, !maximizable);
       }
@@ -302,9 +312,12 @@ export class DockTabs extends React.PureComponent<Props, any> {
   render(): React.ReactNode {
     let {group, tabs, activeId} = this.props.panelData;
     let tabGroup = this.context.getGroup(group);
-    let {animated} = tabGroup;
+    let {animated, moreIcon} = tabGroup;
     if (animated == null) {
       animated = true;
+    }
+    if (!moreIcon) {
+      moreIcon = "...";
     }
 
     this.updateTabs(tabs);
@@ -316,7 +329,7 @@ export class DockTabs extends React.PureComponent<Props, any> {
 
     return (
       <Tabs prefixCls="dock"
-            moreIcon="..."
+            moreIcon={moreIcon}
             animated={animated}
             renderTabBar={this.renderTabBar}
             activeKey={activeId}

@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import * as React from "react";
 import { BoxData, DockContext, DropDirection, LayoutBase, LayoutData, PanelBase, PanelData, TabBase, TabData, TabGroup, TabPaneCache } from "./DockData";
 import * as Algorithm from "./Algorithm";
 export interface LayoutProps {
@@ -56,7 +56,7 @@ export interface LayoutProps {
      * - if tabs is empty, but still remaining in layout because of panelLock, make sure also set the group if it's not null
      */
     afterPanelLoaded?(savedPanel: PanelBase, loadedPanel: PanelData): void;
-    style?: CSSProperties;
+    style?: React.CSSProperties;
     /**
      * when specified, docklayout will create a react portal for the maximized panel
      * use dom element as the value, or use the element's id
@@ -80,6 +80,7 @@ declare class DockPortalManager extends React.PureComponent<LayoutProps, LayoutS
     /** @ignore */
     _caches: Map<string, TabPaneCache>;
     _pendingDestroy: any;
+    _isMounted: boolean;
     destroyRemovedPane: () => void;
     /** @ignore */
     getTabCache(id: string, owner: any): TabPaneCache;
@@ -106,8 +107,14 @@ export declare class DockLayout extends DockPortalManager implements DockContext
      * @param source @inheritDoc
      * @param target @inheritDoc
      * @param direction @inheritDoc
+     * @param floatPosition @inheritDoc
      */
-    dockMove(source: TabData | PanelData, target: string | TabData | PanelData | BoxData | null, direction: DropDirection): void;
+    dockMove(source: TabData | PanelData, target: string | TabData | PanelData | BoxData | null, direction: DropDirection, floatPosition?: {
+        left: number;
+        top: number;
+        width: number;
+        height: number;
+    }): void;
     /** @inheritDoc */
     find(id: string, filter?: Algorithm.Filter): PanelData | TabData | BoxData;
     /** @ignore */
@@ -116,7 +123,7 @@ export declare class DockLayout extends DockPortalManager implements DockContext
         height: number;
     };
     /** @inheritDoc */
-    updateTab(id: string, newTab: TabData, makeActive?: boolean): boolean;
+    updateTab(id: string, newTab: TabData | null, makeActive?: boolean): boolean;
     /** @inheritDoc */
     navigateToPanel(fromElement?: HTMLElement, direction?: string): void;
     constructor(props: LayoutProps);
@@ -134,6 +141,8 @@ export declare class DockLayout extends DockPortalManager implements DockContext
     _onWindowResize: any;
     /** @ignore */
     panelToFocus: string;
+    /** @ignore */
+    componentDidMount(): void;
     /** @ignore
      * move focus to panelToFocus
      */
