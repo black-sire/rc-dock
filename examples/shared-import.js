@@ -17477,13 +17477,34 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _default = _Dropdown.default;
 exports.default = _default;
-},{"./Dropdown":"rgdw"}],"EJTb":[function(require,module,exports) {
+},{"./Dropdown":"rgdw"}],"CZvM":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.groupClassNames = void 0;
+
+const groupClassNames = (groupNames = '') => groupNames.split(' ').filter(value => value !== '').map(name => `dock-style-${name}`);
+
+exports.groupClassNames = groupClassNames;
+},{}],"EJTb":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.removeDragStateListener = exports.addDragStateListener = exports.destroyDraggingElement = exports.removeHandlers = exports.addHandlers = exports.isDragging = exports.DragState = void 0;
+
+const classnames_1 = __importDefault(require("classnames"));
+
+const Utils_1 = require("../Utils");
 
 class DragState {
   constructor(event, component, init = false) {
@@ -17687,7 +17708,8 @@ let _draggingIcon;
 function _createDraggingDiv(doc) {
   _draggingDiv = doc.createElement('div');
   _draggingIcon = doc.createElement('div');
-  _draggingDiv.className = 'dragging-layer';
+  const tabGroup = _data && 'tabGroup' in _data ? _data['tabGroup'] : undefined;
+  _draggingDiv.className = classnames_1.default(Utils_1.groupClassNames(tabGroup), 'dragging-layer');
 
   _draggingDiv.appendChild(document.createElement('div')); // place holder for dragging element
 
@@ -17807,7 +17829,7 @@ if (typeof window !== 'undefined' && window.navigator && window.navigator.platfo
     passive: false
   });
 }
-},{}],"cItD":[function(require,module,exports) {
+},{"classnames":"qb7c","../Utils":"CZvM"}],"cItD":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17829,32 +17851,32 @@ class GestureState {
     this.component = component;
     this._init = init;
 
-    if (event) {
-      if (event.touches.length === 2) {
-        let touch1 = event.touches[0];
-        let touch2 = event.touches[1];
-        this.dx1 = (touch1.pageX - component.baseX) * component.scaleX;
-        this.dy1 = (touch1.pageY - component.baseY) * component.scaleY;
-        this.dx2 = (touch2.pageX - component.baseX2) * component.scaleX;
-        this.dy2 = (touch2.pageY - component.baseY2) * component.scaleY;
+    if (!event || event.touches.length !== 2) {
+      return;
+    }
 
-        if (this.dx1 * this.dx2 >= 0) {
-          this.dx = (this.dx1 + this.dx2) / 2;
-        }
+    let touch1 = event.touches[0];
+    let touch2 = event.touches[1];
+    this.dx1 = (touch1.pageX - component.baseX) * component.scaleX;
+    this.dy1 = (touch1.pageY - component.baseY) * component.scaleY;
+    this.dx2 = (touch2.pageX - component.baseX2) * component.scaleX;
+    this.dy2 = (touch2.pageY - component.baseY2) * component.scaleY;
 
-        if (this.dy1 * this.dy2 >= 0) {
-          this.dy = (this.dy1 + this.dy2) / 2;
-        }
+    if (this.dx1 * this.dx2 >= 0) {
+      this.dx = (this.dx1 + this.dx2) / 2;
+    }
 
-        this.scale = Math.sqrt(Math.pow(touch2.pageX - touch1.pageX, 2) + Math.pow(touch2.pageY - touch1.pageY, 2)) / component.baseDis;
-        this.rotate = Math.atan2(touch2.pageY - touch1.pageY, touch2.pageX - touch1.pageX) - component.baseAng;
+    if (this.dy1 * this.dy2 >= 0) {
+      this.dy = (this.dy1 + this.dy2) / 2;
+    }
 
-        if (this.rotate > Math.PI) {
-          this.rotate -= Math.PI * 2;
-        } else if (this.rotate < -Math.PI) {
-          this.rotate += Math.PI * 2;
-        }
-      }
+    this.scale = Math.sqrt(Math.pow(touch2.pageX - touch1.pageX, 2) + Math.pow(touch2.pageY - touch1.pageY, 2)) / component.baseDis;
+    this.rotate = Math.atan2(touch2.pageY - touch1.pageY, touch2.pageX - touch1.pageX) - component.baseAng;
+
+    if (this.rotate > Math.PI) {
+      this.rotate -= Math.PI * 2;
+    } else if (this.rotate < -Math.PI) {
+      this.rotate += Math.PI * 2;
     }
   }
 
@@ -18112,7 +18134,6 @@ class DragDropDiv extends React.PureComponent {
       let {
         onGestureEndT
       } = this.props;
-      let state = new DragManager.DragState(e, this);
       this.removeListeners();
 
       if (onGestureEndT) {
@@ -18148,10 +18169,6 @@ class DragDropDiv extends React.PureComponent {
   }
 
   addDragListeners(event) {
-    let {
-      onDragStartT
-    } = this.props;
-
     if (event.type === 'touchstart') {
       this.ownerDocument.addEventListener('touchmove', this.onTouchMove);
       this.ownerDocument.addEventListener('touchend', this.onDragEnd);
@@ -20487,10 +20504,6 @@ class DockDropSquare extends React.PureComponent {
     };
 
     this.onDragLeave = e => {
-      let {
-        panelElement,
-        direction
-      } = this.props;
       this.setState({
         dropping: false
       });
@@ -20986,6 +20999,12 @@ var __importStar = this && this.__importStar || function (mod) {
   return result;
 };
 
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -21006,6 +21025,10 @@ const DockDropLayer_1 = require("./DockDropLayer");
 const Algorithm_1 = require("./Algorithm");
 
 const DockDropEdge_1 = require("./DockDropEdge");
+
+const Utils_1 = require("./Utils");
+
+const classnames_1 = __importDefault(require("classnames"));
 
 class DockPanel extends React.PureComponent {
   constructor() {
@@ -21038,9 +21061,6 @@ class DockPanel extends React.PureComponent {
         return;
       }
 
-      let {
-        panelData
-      } = this.props;
       let dockId = this.context.getDockId();
       let tab = DragManager_1.DragState.getData('tab', dockId);
       let panel = DragManager_1.DragState.getData('panel', dockId);
@@ -21089,7 +21109,8 @@ class DockPanel extends React.PureComponent {
         this._movingY = y; // hide the panel, but not create drag layer element
 
         event.setData({
-          panel: this.props.panelData
+          panel: panelData,
+          tabGroup: panelData.group
         }, dockId);
         event.startDrag(null, null);
         this.onFloatPointerDown();
@@ -21098,7 +21119,8 @@ class DockPanel extends React.PureComponent {
         let [panelWidth, panelHeight] = Algorithm_1.getFloatPanelSize(this._ref, tabGroup);
         event.setData({
           panel: panelData,
-          panelSize: [panelWidth, panelHeight]
+          panelSize: [panelWidth, panelHeight],
+          tabGroup: panelData.group
         }, dockId);
         event.startDrag(null);
       }
@@ -21277,6 +21299,8 @@ class DockPanel extends React.PureComponent {
           }
       }
 
+      panelData.w = Math.max(panelData.w || 0, panelData.minWidth || 0);
+      panelData.h = Math.max(panelData.h || 0, panelData.minHeight || 0);
       this.forceUpdate();
     };
 
@@ -21393,12 +21417,7 @@ class DockPanel extends React.PureComponent {
       }
     }
 
-    let panelClass;
-
-    if (styleName) {
-      panelClass = styleName.split(' ').map(name => `dock-style-${name}`).join(' ');
-    }
-
+    let panelClass = classnames_1.default(Utils_1.groupClassNames(styleName));
     let isMax = (parent === null || parent === void 0 ? void 0 : parent.mode) === 'maximize';
     let isFloat = (parent === null || parent === void 0 ? void 0 : parent.mode) === 'float';
     let isHBox = (parent === null || parent === void 0 ? void 0 : parent.mode) === 'horizontal';
@@ -21538,7 +21557,7 @@ class DockPanel extends React.PureComponent {
 
 exports.DockPanel = DockPanel;
 DockPanel.contextType = DockData_1.DockContextType;
-},{"react":"n8MK","./DockData":"zh3I","./DockTabs":"nskJ","./dragdrop/DragDropDiv":"HyIX","./dragdrop/DragManager":"EJTb","./DockDropLayer":"YpI8","./Algorithm":"wqok","./DockDropEdge":"QpCJ"}],"LPFX":[function(require,module,exports) {
+},{"react":"n8MK","./DockData":"zh3I","./DockTabs":"nskJ","./dragdrop/DragDropDiv":"HyIX","./dragdrop/DragManager":"EJTb","./DockDropLayer":"YpI8","./Algorithm":"wqok","./DockDropEdge":"QpCJ","./Utils":"CZvM","classnames":"qb7c"}],"LPFX":[function(require,module,exports) {
 "use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -22003,6 +22022,10 @@ const Algorithm_1 = require("./Algorithm");
 
 const WindowBox_1 = require("./WindowBox");
 
+const Utils_1 = require("./Utils");
+
+const classnames_1 = __importDefault(require("classnames"));
+
 function findParentPanel(element) {
   for (let i = 0; i < 10; ++i) {
     if (!element) {
@@ -22061,7 +22084,8 @@ class TabCache {
       let [panelWidth, panelHeight] = Algorithm_1.getFloatPanelSize(panelElement, tabGroup);
       e.setData({
         tab: this.data,
-        panelSize: [panelWidth, panelHeight]
+        panelSize: [panelWidth, panelHeight],
+        tabGroup: this.data.group
       }, this.context.getDockId());
       e.startDrag(this._ref.parentElement, this._ref.parentElement);
     };
@@ -22156,7 +22180,6 @@ class TabCache {
     let {
       id,
       title,
-      group,
       content,
       closable,
       cached,
@@ -22175,8 +22198,6 @@ class TabCache {
       onDrop = null;
       onDragLeave = null;
     }
-
-    let tabGroup = this.context.getGroup(group);
 
     if (typeof content === 'function') {
       content = content(this.data);
@@ -22380,7 +22401,8 @@ class DockTabs extends React.PureComponent {
       animated: animated,
       renderTabBar: this.renderTabBar,
       activeKey: activeId,
-      onChange: this.onTabChange
+      onChange: this.onTabChange,
+      popupClassName: classnames_1.default(Utils_1.groupClassNames(group))
     }, children);
   }
 
@@ -22389,7 +22411,7 @@ class DockTabs extends React.PureComponent {
 exports.DockTabs = DockTabs;
 DockTabs.contextType = DockData_1.DockContextType;
 DockTabs.propKeys = ['group', 'tabs', 'activeId', 'onTabChange'];
-},{"react":"n8MK","./DockData":"zh3I","rc-tabs":"FgVr","rc-menu":"VH7R","rc-dropdown":"SyQB","./dragdrop/DragManager":"EJTb","./dragdrop/DragDropDiv":"HyIX","./DockTabBar":"Ec16","./DockTabPane":"ZavB","./Algorithm":"wqok","./WindowBox":"ObQG"}],"Lzzn":[function(require,module,exports) {
+},{"react":"n8MK","./DockData":"zh3I","rc-tabs":"FgVr","rc-menu":"VH7R","rc-dropdown":"SyQB","./dragdrop/DragManager":"EJTb","./dragdrop/DragDropDiv":"HyIX","./DockTabBar":"Ec16","./DockTabPane":"ZavB","./Algorithm":"wqok","./WindowBox":"ObQG","./Utils":"CZvM","classnames":"qb7c"}],"Lzzn":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -22666,39 +22688,41 @@ class DockBox extends React.PureComponent {
     };
 
     this.getDividerData = idx => {
-      if (this._ref) {
-        let {
-          children,
-          mode
-        } = this.props.boxData;
-        let nodes = this._ref.childNodes;
+      if (!this._ref) {
+        return null;
+      }
 
-        if (nodes.length === children.length * 2 - 1) {
-          let dividerChildren = [];
+      let {
+        children,
+        mode
+      } = this.props.boxData;
+      let nodes = this._ref.childNodes;
 
-          for (let i = 0; i < children.length; ++i) {
-            if (mode === 'vertical') {
-              dividerChildren.push({
-                size: nodes[i * 2].offsetHeight,
-                minSize: children[i].minHeight
-              });
-            } else {
-              dividerChildren.push({
-                size: nodes[i * 2].offsetWidth,
-                minSize: children[i].minWidth
-              });
-            }
-          }
+      if (nodes.length !== children.length * 2 - 1) {
+        return;
+      }
 
-          return {
-            element: this._ref,
-            beforeDivider: dividerChildren.slice(0, idx),
-            afterDivider: dividerChildren.slice(idx)
-          };
+      let dividerChildren = [];
+
+      for (let i = 0; i < children.length; ++i) {
+        if (mode === 'vertical') {
+          dividerChildren.push({
+            size: nodes[i * 2].offsetHeight,
+            minSize: children[i].minHeight
+          });
+        } else {
+          dividerChildren.push({
+            size: nodes[i * 2].offsetWidth,
+            minSize: children[i].minWidth
+          });
         }
       }
 
-      return null;
+      return {
+        element: this._ref,
+        beforeDivider: dividerChildren.slice(0, idx),
+        afterDivider: dividerChildren.slice(idx)
+      };
     };
 
     this.changeSizes = sizes => {
@@ -22706,13 +22730,15 @@ class DockBox extends React.PureComponent {
         children
       } = this.props.boxData;
 
-      if (children.length === sizes.length) {
-        for (let i = 0; i < children.length; ++i) {
-          children[i].size = sizes[i];
-        }
-
-        this.forceUpdate();
+      if (children.length !== sizes.length) {
+        return;
       }
+
+      for (let i = 0; i < children.length; ++i) {
+        children[i].size = sizes[i];
+      }
+
+      this.forceUpdate();
     };
 
     this.onDragEnd = () => {
@@ -22933,11 +22959,7 @@ exports.createLayoutCache = createLayoutCache;
 
 function saveLayoutData(layout, saveTab, afterPanelSaved) {
   function saveTabData(tabData) {
-    if (saveTab) {
-      return saveTab(tabData);
-    }
-
-    return {
+    return saveTab ? saveTab(tabData) : {
       id: tabData.id
     };
   }
@@ -22956,7 +22978,8 @@ function saveLayoutData(layout, saveTab, afterPanelSaved) {
     let {
       id,
       size,
-      activeId
+      activeId,
+      group
     } = panelData;
     let savedPanel;
 
@@ -22972,6 +22995,7 @@ function saveLayoutData(layout, saveTab, afterPanelSaved) {
         id,
         size,
         tabs,
+        group,
         activeId,
         x,
         y,
@@ -22984,6 +23008,7 @@ function saveLayoutData(layout, saveTab, afterPanelSaved) {
         id,
         size,
         tabs,
+        group,
         activeId
       };
     }
@@ -23059,7 +23084,8 @@ function loadLayoutData(savedLayout, defaultLayout, loadTab, afterPanelLoaded) {
       y,
       z,
       w,
-      h
+      h,
+      group
     } = savedPanel;
     let tabs = [];
 
@@ -23078,6 +23104,7 @@ function loadLayoutData(savedLayout, defaultLayout, loadTab, afterPanelLoaded) {
         id,
         size,
         activeId,
+        group,
         x,
         y,
         z,
@@ -23090,6 +23117,7 @@ function loadLayoutData(savedLayout, defaultLayout, loadTab, afterPanelLoaded) {
         id,
         size,
         activeId,
+        group,
         tabs
       };
     }
@@ -23561,15 +23589,7 @@ class DockLayout extends DockPortalManager {
 
     if (layout !== this.getLayout()) {
       layout = Algorithm.fixLayoutData(layout, this.props.groups);
-      let currentTabId = null;
-
-      if (source.hasOwnProperty('tabs')) {
-        currentTabId = source.activeId;
-      } else {
-        // when source is tab
-        currentTabId = source.id;
-      }
-
+      const currentTabId = source.hasOwnProperty('tabs') ? source.activeId : source.id;
       this.changeLayout(layout, currentTabId, direction);
     }
 
@@ -23605,49 +23625,49 @@ class DockLayout extends DockPortalManager {
 
     let tab = this.find(id, Algorithm.Filter.AnyTab);
 
-    if (tab) {
-      let panelData = tab.parent;
-      let idx = panelData.tabs.indexOf(tab);
-
-      if (idx >= 0) {
-        let {
-          loadTab
-        } = this.props;
-        let layout = this.getLayout();
-
-        if (newTab) {
-          let activeId = panelData.activeId;
-
-          if (loadTab && !('content' in newTab && 'title' in newTab)) {
-            newTab = loadTab(newTab);
-          }
-
-          layout = Algorithm.removeFromLayout(layout, tab); // remove old tab
-
-          panelData = Algorithm.getUpdatedObject(panelData); // panelData might change during removeTab
-
-          layout = Algorithm.addTabToPanel(layout, newTab, panelData, idx); // add new tab
-
-          panelData = Algorithm.getUpdatedObject(panelData); // panelData might change during addTabToPanel
-
-          if (!makeActive) {
-            // restore the previous activeId
-            panelData.activeId = activeId;
-            this.panelToFocus = panelData.id;
-          }
-        } else if (makeActive && panelData.activeId !== id) {
-          layout = Algorithm.replacePanel(layout, panelData, Object.assign(Object.assign({}, panelData), {
-            activeId: id
-          }));
-        }
-
-        layout = Algorithm.fixLayoutData(layout, this.props.groups);
-        this.changeLayout(layout, (_a = newTab === null || newTab === void 0 ? void 0 : newTab.id) !== null && _a !== void 0 ? _a : id, 'update');
-        return true;
-      }
+    if (!tab) {
+      return false;
     }
 
-    return false;
+    let panelData = tab.parent;
+    let idx = panelData.tabs.indexOf(tab);
+
+    if (idx >= 0) {
+      let {
+        loadTab
+      } = this.props;
+      let layout = this.getLayout();
+
+      if (newTab) {
+        let activeId = panelData.activeId;
+
+        if (loadTab && !('content' in newTab && 'title' in newTab)) {
+          newTab = loadTab(newTab);
+        }
+
+        layout = Algorithm.removeFromLayout(layout, tab); // remove old tab
+
+        panelData = Algorithm.getUpdatedObject(panelData); // panelData might change during removeTab
+
+        layout = Algorithm.addTabToPanel(layout, newTab, panelData, idx); // add new tab
+
+        panelData = Algorithm.getUpdatedObject(panelData); // panelData might change during addTabToPanel
+
+        if (!makeActive) {
+          // restore the previous activeId
+          panelData.activeId = activeId;
+          this.panelToFocus = panelData.id;
+        }
+      } else if (makeActive && panelData.activeId !== id) {
+        layout = Algorithm.replacePanel(layout, panelData, Object.assign(Object.assign({}, panelData), {
+          activeId: id
+        }));
+      }
+
+      layout = Algorithm.fixLayoutData(layout, this.props.groups);
+      this.changeLayout(layout, (_a = newTab === null || newTab === void 0 ? void 0 : newTab.id) !== null && _a !== void 0 ? _a : id, 'update');
+      return true;
+    }
   }
   /** @inheritDoc */
 
@@ -24086,42 +24106,44 @@ class DividerBox extends React.PureComponent {
     };
 
     this.getDividerData = idx => {
-      if (this._ref) {
-        let {
-          children,
-          mode
-        } = this.props;
-        let nodes = this._ref.childNodes;
-        let length = 1;
+      if (!this._ref) {
+        return null;
+      }
 
-        if (Array.isArray(children)) {
-          length = children.length;
-        }
+      let {
+        children,
+        mode
+      } = this.props;
+      let nodes = this._ref.childNodes;
+      let length = 1;
 
-        if (nodes.length === length * 2 - 1) {
-          let dividerChildren = [];
+      if (Array.isArray(children)) {
+        length = children.length;
+      }
 
-          for (let i = 0; i < length; ++i) {
-            if (mode === 'vertical') {
-              dividerChildren.push({
-                size: nodes[i * 2].offsetHeight
-              });
-            } else {
-              dividerChildren.push({
-                size: nodes[i * 2].offsetWidth
-              });
-            }
-          }
+      if (nodes.length !== length * 2 - 1) {
+        return;
+      }
 
-          return {
-            element: this._ref,
-            beforeDivider: dividerChildren.slice(0, idx),
-            afterDivider: dividerChildren.slice(idx)
-          };
+      let dividerChildren = [];
+
+      for (let i = 0; i < length; ++i) {
+        if (mode === 'vertical') {
+          dividerChildren.push({
+            size: nodes[i * 2].offsetHeight
+          });
+        } else {
+          dividerChildren.push({
+            size: nodes[i * 2].offsetWidth
+          });
         }
       }
 
-      return null;
+      return {
+        element: this._ref,
+        beforeDivider: dividerChildren.slice(0, idx),
+        afterDivider: dividerChildren.slice(idx)
+      };
     };
 
     this.changeSizes = sizes => {
