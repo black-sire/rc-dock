@@ -65,7 +65,7 @@ export default class DockTabPane extends React.PureComponent<DockTabPaneProps, a
     if (!active) {
       if (animated) {
         mergedStyle.visibility = 'hidden';
-        mergedStyle.height = 0;
+        //mergedStyle.height = 0;
         mergedStyle.overflowY = 'hidden';
       } else {
         mergedStyle.display = 'none';
